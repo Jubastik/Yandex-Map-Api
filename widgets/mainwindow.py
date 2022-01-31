@@ -25,6 +25,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def connect_btns(self):
         self.btn_search.clicked.connect(self.search)
         self.btn_reset.clicked.connect(self.reset)
+        self.btn_hybrid.clicked.connect(self.hybrid_clicked)
+        self.btn_scheme.clicked.connect(self.scheme_clicked)
+        self.btn_satellite.clicked.connect(self.sattelite_clicked)
+
+    def hybrid_clicked(self):
+        self.map_mode = "sat,skl"
+        try:
+            self.update_map()
+        except:
+            pass
+
+    def scheme_clicked(self):
+        self.map_mode = "map"
+        self.update_map()
+
+    def sattelite_clicked(self):
+        self.map_mode = "sat"
+        self.update_map()
 
     def update_map(self):
         if self.marker_on_map:
@@ -33,6 +51,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             params = make_params(self.ll, self.map_mode, self.zoom)
         img = get_map_picture(params)
         self.set_map_picture(img=img)
+        print(1)
 
     def keyPressEvent(self, event):
         """Обработка нажатий"""
