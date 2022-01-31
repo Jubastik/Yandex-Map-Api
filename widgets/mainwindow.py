@@ -40,9 +40,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def change_map_style(self, style):
         pass
-
-    def set_map_picture(self, file_name="resources/map.png"):
-        pass
     
     def search(self):
         address = self.lineEdit.text()
@@ -53,10 +50,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             self.statusbar.showMessage("Объект не найден", 10000)
 
-    def set_map_picture(self, file_name='resources/map.png'):
-        pixmap = QPixmap(file_name)
-
+    def set_map_picture(self, file_name='resources/map.png', img=None):
+        if img is None:
+            pixmap = QPixmap(file_name)
+        else:
+            pixmap = QPixmap.fromImage(img)
         self.map.setPixmap(pixmap)
         self.map.resize(pixmap.width(), pixmap.height())
-
         self.resize(pixmap.width(), pixmap.height())
