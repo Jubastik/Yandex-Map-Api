@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QMainWindow
 from UI.ui_main import Ui_MainWindow
+from PyQt5.QtGui import QPixmap
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -7,6 +8,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
         self.app = app
+        self.set_map_picture()
 
     def keyPressEvent(self, event):
         """Обработка нажатий"""
@@ -27,5 +29,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def change_map_style(self, style):
         pass
 
-    def change_map_picture(self, picture):
-        pass
+    def set_map_picture(self, file_name='resources/map.png'):
+        pixmap = QPixmap(file_name)
+
+        self.map.setPixmap(pixmap)
+        self.map.resize(pixmap.width(), pixmap.height())
+
+        self.resize(pixmap.width(), pixmap.height())
