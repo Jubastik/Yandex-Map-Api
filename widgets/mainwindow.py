@@ -1,5 +1,6 @@
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtCore import Qt
 
 from CONSTANTS import ZOOM, CORDS_DEFAULT, MAP_MODE
 from UI.ui_main import Ui_MainWindow
@@ -31,10 +32,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def hybrid_clicked(self):
         self.map_mode = "sat,skl"
-        try:
-            self.update_map()
-        except:
-            pass
+        self.update_map()
 
     def scheme_clicked(self):
         self.map_mode = "map"
@@ -51,17 +49,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             params = make_params(self.ll, self.map_mode, self.zoom)
         img = get_map_picture(params)
         self.set_map_picture(img=img)
-        print(1)
 
     def keyPressEvent(self, event):
         """Обработка нажатий"""
-        pass
-
-    def pgup_pressed(self):
-        pass
-
-    def pgdown_pressed(self):
-        pass
+        if event.key() == Qt.Key_PageUp:
+            self.zoom = max(self.zoom / 2, 0.00015625)
+            self.update_map()
+        elif event.key() == Qt.Key_PageDown:
+            self.zoom = min(self.zoom * 2, 81.92)
+            self.update_map()
 
     def search_on_click(self):
         pass
