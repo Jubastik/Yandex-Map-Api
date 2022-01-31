@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QMainWindow
 from UI.ui_main import Ui_MainWindow
 from PyQt5.QtGui import QPixmap
+from CONSTANTS import ZOOM, CORDS_DEFAULT, MAP_MODE
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -9,6 +10,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.app = app
         self.set_map_picture()
+        self.zoom = ZOOM
+        self.ll = CORDS_DEFAULT
+        self.map_mode = MAP_MODE
+
 
     def keyPressEvent(self, event):
         """Обработка нажатий"""
@@ -29,7 +34,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def change_map_style(self, style):
         pass
 
-    def set_map_picture(self, file_name='resources/map.png'):
+    def set_map_picture(self, file_name="resources/map.png"):
         pixmap = QPixmap(file_name)
 
         self.map.setPixmap(pixmap)

@@ -1,0 +1,3 @@
+CORDS_DEFAULT = [2.369370, 48.84240]  # Париж
+ZOOM = 0.01
+MAP_MODE = 'map'
