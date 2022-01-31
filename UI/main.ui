@@ -53,6 +53,15 @@
       </item>
       <item>
        <widget class="QLabel" name="map">
+        <property name="mouseTracking">
+         <bool>false</bool>
+        </property>
+        <property name="tabletTracking">
+         <bool>false</bool>
+        </property>
+        <property name="focusPolicy">
+         <enum>Qt::ClickFocus</enum>
+        </property>
         <property name="styleSheet">
          <string notr="true">background-color: rgb(167, 170, 155);</string>
         </property>

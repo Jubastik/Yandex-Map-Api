@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QMainWindow
 from PyQt5.QtCore import Qt
 
 from CONSTANTS import ZOOM, CORDS_DEFAULT, MAP_MODE
-from UI.ui_main import Ui_MainWindow
+from UI.main_ui import Ui_MainWindow
 from yandex_maps_api.geocoder import get_address_info
 from yandex_maps_api.make_params import make_params
 from yandex_maps_api.get_map_picture import get_map_picture
@@ -44,7 +44,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def update_map(self):
         if self.marker_on_map:
-            pass
+            params = make_params(self.ll, self.map_mode, self.zoom)
         else:
             params = make_params(self.ll, self.map_mode, self.zoom)
         img = get_map_picture(params)
@@ -58,6 +58,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         elif event.key() == Qt.Key_PageDown:
             self.zoom = min(self.zoom * 2, 81.92)
             self.update_map()
+        elif event.key() == Qt.Key_Down:
+            self.ll = [self.ll[0], str(float(self.ll[1]) - 0.5 * self.zoom)]
+            self.update_map()
+        elif event.key() == Qt.Key_Up:
+            self.ll = [self.ll[0], str(float(self.ll[1]) + 0.5 * self.zoom)]
+            self.update_map()
+        elif event.key() == Qt.Key_Right:
+            self.ll = [str(float(self.ll[0]) + 0.5 * self.zoom), self.ll[1]]
+            self.update_map()
+        elif event.key() == Qt.Key_Left:
+            self.ll = [str(float(self.ll[0]) - 0.5 * self.zoom), self.ll[1]]
+            self.update_map()
+        
 
     def search_on_click(self):
         pass
@@ -82,7 +95,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         full_address = ans[1]
         postal_code = ans[2]
         if ans[0] is not None:
-            self.ll = coords
+            self.ll = map(str, coords)
             self.marker_on_map = True
             self.marker_coords = coords
             self.update_map()
