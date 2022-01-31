@@ -3,6 +3,7 @@ from UI.ui_main import Ui_MainWindow
 from PyQt5.QtGui import QPixmap
 from CONSTANTS import ZOOM, CORDS_DEFAULT, MAP_MODE
 
+from yandex_maps_api.geocoder import get_coordinates
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self, app):
@@ -13,7 +14,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.zoom = ZOOM
         self.ll = CORDS_DEFAULT
         self.map_mode = MAP_MODE
+        self.connect_btns()
 
+    def connect_btns(self):
+        self.btn_search.clicked.connect(self.search)
 
     def keyPressEvent(self, event):
         """Обработка нажатий"""
@@ -35,6 +39,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         pass
 
     def set_map_picture(self, file_name="resources/map.png"):
+        pass
+    
+    def search(self):
+        address = self.lineEdit.text()
+
+    def set_map_picture(self, file_name='resources/map.png'):
         pixmap = QPixmap(file_name)
 
         self.map.setPixmap(pixmap)
