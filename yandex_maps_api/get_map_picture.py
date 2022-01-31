@@ -5,7 +5,6 @@ import sys
 
 
 def get_map_picture(params):
-    params = {"ll": ll, "spn": zoom, "l": mode}
     response = requests.get("https://static-maps.yandex.ru/1.x/?", params=params)
     if not response:
         print("Ошибка выполнения запроса:")

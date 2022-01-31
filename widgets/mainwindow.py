@@ -4,6 +4,8 @@ from PyQt5.QtWidgets import QMainWindow
 from CONSTANTS import ZOOM, CORDS_DEFAULT, MAP_MODE
 from UI.ui_main import Ui_MainWindow
 from yandex_maps_api.geocoder import get_address_info
+from yandex_maps_api.make_params import make_params
+from yandex_maps_api.get_map_picture import get_map_picture
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -17,6 +19,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.map_mode = MAP_MODE
         self.marker_on_map = False
         self.marker_coords = [None, None]
+        self.update_map()
         self.connect_btns()
 
     def connect_btns(self):
@@ -24,7 +27,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.btn_reset.clicked.connect(self.reset)
 
     def update_map(self):
-        pass
+        if self.marker_on_map:
+            pass
+        else:
+            params = make_params(self.ll, self.map_mode, self.zoom)
+        img = get_map_picture(params)
+        self.set_map_picture(img=img)
 
     def keyPressEvent(self, event):
         """Обработка нажатий"""
@@ -47,7 +55,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def change_map_style(self, style):
         pass
-    
+
     def search(self):
         address = self.lineEdit.text()
         try:
@@ -70,16 +78,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             self.statusbar.showMessage("Объект не найден", 10000)
 
-    def set_map_picture(self, file_name='resources/map.png', img=None):
+    def set_map_picture(self, file_name="resources/map.png", img=None):
         if img is None:
             pixmap = QPixmap(file_name)
         else:
             pixmap = QPixmap.fromImage(img)
-        pixmap = QPixmap(file_name)
 
         self.map.setPixmap(pixmap)
         self.map.resize(pixmap.width(), pixmap.height())
         self.resize(pixmap.width(), pixmap.height())
-    
+
     def set_address(self, address):
         self.object_data.setText(address)
