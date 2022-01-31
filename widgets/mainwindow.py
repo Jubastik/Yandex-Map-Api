@@ -94,7 +94,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         full_address = ans[1]
         postal_code = ans[2]
         if ans[0] is not None:
-            self.ll = map(str, coords)
+            self.ll = list(map(str, coords))
             self.marker_on_map = True
             self.marker_coords = coords
             self.update_map()
