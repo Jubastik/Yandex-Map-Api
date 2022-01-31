@@ -30,16 +30,20 @@ def geocode(address):
 
 
 # Получаем координаты объекта по его адресу.
-def get_coordinates(address):
+def get_address_info(address):
     toponym = geocode(address)
     if not toponym:
-        return None, None
-
+        return None, None, None, None
+    toponym_address = toponym["metaDataProperty"]["GeocoderMetaData"]["text"]
+    try:
+        toponym_postal_code = toponym["metaDataProperty"]["GeocoderMetaData"]["Address"]["postal_code"]
+    except:
+        toponym_postal_code = "Отсутствует"
     # Координаты центра топонима:
     toponym_coodrinates = toponym["Point"]["pos"]
     # Широта, преобразованная в плавающее число:
     toponym_longitude, toponym_lattitude = toponym_coodrinates.split(" ")
-    return float(toponym_longitude), float(toponym_lattitude)
+    return [float(toponym_longitude), float(toponym_lattitude)], toponym_address, toponym_postal_code
 
 
 # Получаем параметры объекта для рисования карты вокруг него.
