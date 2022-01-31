@@ -19,6 +19,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def connect_btns(self):
         self.btn_search.clicked.connect(self.search)
 
+    def update_map(self):
+        pass
+
     def keyPressEvent(self, event):
         """Обработка нажатий"""
         pass
@@ -43,6 +46,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     
     def search(self):
         address = self.lineEdit.text()
+        coords = get_coordinates(address)
+        if coords[0] is not None:
+            self.ll = list(coords)
+            self.update_map()
+        else:
+            self.statusbar.showMessage("Объект не найден", 10000)
 
     def set_map_picture(self, file_name='resources/map.png'):
         pixmap = QPixmap(file_name)
