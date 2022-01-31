@@ -6,7 +6,7 @@ from CONSTANTS import ZOOM, CORDS_DEFAULT, MAP_MODE
 from UI.main_ui import Ui_MainWindow
 from yandex_maps_api.geocoder import get_address_info
 from yandex_maps_api.make_params import make_params
-from yandex_maps_api.get_map_picture import get_map_picture
+from yandex_maps_api.save_map_picture import save_map_picture
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -14,7 +14,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
         self.app = app
-        self.set_map_picture()
+        self.set_map_picture(file_name="resources/map_cache.png")
         self.zoom = ZOOM
         self.ll = CORDS_DEFAULT
         self.map_mode = MAP_MODE
@@ -47,8 +47,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             params = make_params(self.ll, self.map_mode, self.zoom)
         else:
             params = make_params(self.ll, self.map_mode, self.zoom)
-        img = get_map_picture(params)
-        self.set_map_picture(img=img)
+        save_map_picture(params)
+        self.set_map_picture(file_name="resources/map_cache.png")
 
     def keyPressEvent(self, event):
         """Обработка нажатий"""
@@ -70,7 +70,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         elif event.key() == Qt.Key_Left:
             self.ll = [str(float(self.ll[0]) - 0.5 * self.zoom), self.ll[1]]
             self.update_map()
-        
 
     def search_on_click(self):
         pass
