@@ -1,5 +1,5 @@
-def make_params(ll, mode, zoom, pt=False):
-    params = {"ll": ','.join(ll), "spn": f'{zoom},{zoom}', "l": mode}
+def make_params(ll, mode, zoom, pt=False, pt_cords=None):
+    params = {"ll": ",".join(ll), "spn": f"{zoom},{zoom}", "l": mode, "size": "450,450"}
     if pt:
-        params["pt"] = pt  # доработать
+        params["pt"] = {','.join(list(map(str, pt_cords)))}
     return params
