@@ -7,6 +7,7 @@ from UI.main_ui import Ui_MainWindow
 from yandex_maps_api.geocoder import get_address_info
 from yandex_maps_api.make_params import make_params
 from yandex_maps_api.save_map_picture import save_map_picture
+from pixel_to_geo_cords_alg import pixel_to_geo_cords
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -44,7 +45,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def update_map(self):
         if self.marker_on_map:
-            params = make_params(self.ll, self.map_mode, self.zoom, pt=True, pt_cords=self.marker_coords)
+            params = make_params(
+                self.ll, self.map_mode, self.zoom, pt=True, pt_cords=self.marker_coords
+            )
         else:
             params = make_params(self.ll, self.map_mode, self.zoom)
         save_map_picture(params)
@@ -53,59 +56,39 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def keyPressEvent(self, event):
         """Обработка нажатий"""
         if event.key() == Qt.Key_PageUp:
-            self.zoom = max(self.zoom / 2, 0.00015625)
+            self.zoom = max(self.zoom - 1, 2)
             self.update_map()
         elif event.key() == Qt.Key_PageDown:
-            self.zoom = min(self.zoom * 2, 81.92)
+            self.zoom = min(self.zoom + 1, 15)
             self.update_map()
         elif event.key() == Qt.Key_Down:
-            self.ll = [self.ll[0], str(float(self.ll[1]) - 0.5 * self.zoom)]
+            self.ll = [self.ll[0], str(float(self.ll[1]) - (2 ** abs(self.zoom - 16)) / 500)]
             self.update_map()
         elif event.key() == Qt.Key_Up:
-            self.ll = [self.ll[0], str(float(self.ll[1]) + 0.5 * self.zoom)]
+            self.ll = [self.ll[0], str(float(self.ll[1]) + (2 ** abs(self.zoom - 16)) / 500)]
             self.update_map()
         elif event.key() == Qt.Key_Right:
-            self.ll = [str(float(self.ll[0]) + 0.5 * self.zoom), self.ll[1]]
+            self.ll = [str(float(self.ll[0]) + (2 ** abs(self.zoom - 16)) / 500), self.ll[1]]
             self.update_map()
         elif event.key() == Qt.Key_Left:
-            self.ll = [str(float(self.ll[0]) - 0.5 * self.zoom), self.ll[1]]
+            self.ll = [str(float(self.ll[0]) - (2 ** abs(self.zoom - 16)) / 500), self.ll[1]]
             self.update_map()
 
     def mousePressEvent(self, event):
-        # k = zoom / 450  // коэфициент для 1 пикселя (перевод из пикселей в координаты)
-        # ll(local) = (225; 225) | (225 * k; 225 * k)  // локальные координаты относительно левого верхнего угла
-        # zero(global) = ll(global) - ll(local)  // глобальные координаты левого верхний угла
-        # t1(local) = (x; y) | (x * k; y * k)
-        # t1(global) = t1(local) + zero(global)
-
         # X1 x Y1 ; X2  x  Y2 ; W   x   H
         # 9  x 39 ; 459 x 489 ; 450 x 450
         if event.button() == Qt.RightButton:
             pos = (event.x(), event.y())
             if 9 <= pos[0] <= 459 and 39 <= pos[1] <= 489:
-                # pos = (pos[0] - 9, pos[1] - 39)
-                # k = self.zoom // 450
-                # ll_local = [225 * k, 225 * k]
-                # zero_global = [self.ll[0] - ll_local[0], self.ll[1] - ll_local[1]]
-                # t1_local = [pos[0] * k, pos[1] * k]
-                # t1_global = [t1_local[0] + zero_global[0], t1_local[1] + zero_global[1]]
-                # cords = ','.join(t1_global)
-                # self.search(cords)
+                pos = [pos[0] - 9, pos[1] - 39]
+                cords = pixel_to_geo_cords(pos, self.ll, self.zoom)
                 pass
         elif event.button() == Qt.LeftButton:
             pos = (event.x(), event.y())
             if 9 <= pos[0] <= 459 and 39 <= pos[1] <= 489:
-                pos = (pos[0] - 9, pos[1] - 39)
-                k = self.zoom / 450
-                ll_local = [225 * k, 225 * k]
-                zero_global = [
-                    float(self.ll[0]) - ll_local[0],
-                    float(self.ll[1]) - ll_local[1],
-                ]
-                t1_local = [pos[0] * k, pos[1] * k]
-                t1_global = [t1_local[0] + zero_global[0], t1_local[1] + zero_global[1]]
-                cords = ",".join(list(map(str, t1_global)))
-                self.search(cords, map_cords_update=False)
+                pos = [pos[0] - 9, pos[1] - 39]
+                cords = pixel_to_geo_cords(pos, self.ll, self.zoom)
+                self.search(','.join(cords), map_cords_update=False)
 
     def reset(self):
         self.lineEdit.setText("")
