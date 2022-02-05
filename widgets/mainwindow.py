@@ -23,6 +23,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.marker_coords = [None, None]
         self.update_map()
         self.connect_btns()
+        self.full_address = None
+        self.postal_code = None
 
     def connect_btns(self):
         self.btn_search.clicked.connect(self.on_click_search)
@@ -30,6 +32,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.btn_hybrid.clicked.connect(self.hybrid_clicked)
         self.btn_scheme.clicked.connect(self.scheme_clicked)
         self.btn_satellite.clicked.connect(self.sattelite_clicked)
+        self.cb_post.stateChanged.connect(self.change_check_box)
 
     def hybrid_clicked(self):
         self.map_mode = "sat,skl"
@@ -95,6 +98,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.set_address("")
         self.marker_on_map = False
         self.marker_coords = [None, None]
+        self.full_address = None
+        self.postal_code = None
 
     def on_click_search(self):
         address = self.lineEdit.text()
@@ -107,8 +112,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.statusbar.showMessage("Ошибка выполнения запроса", 10000)
             return
         coords = ans[0]
-        full_address = ans[1]
-        postal_code = ans[2]
+        self.full_address = ans[1]
+        self.postal_code = ans[2]
         if ans[0] is not None:
             if map_cords_update:
                 self.ll = list(map(str, coords))
@@ -116,9 +121,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.marker_coords = coords
             self.update_map()
             if self.cb_post.isChecked():
-                self.set_address(f"{full_address}\nПочтовый адрес: {postal_code}")
+                self.set_address(f"{self.full_address}\nПочтовый адрес: {self.postal_code}")
             else:
-                self.set_address(full_address)
+                self.set_address(self.full_address)
         else:
             self.statusbar.showMessage("Объект не найден", 10000)
 
@@ -134,3 +139,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def set_address(self, address):
         self.object_data.setText(address)
+
+    def change_check_box(self):
+        if self.full_address is not None:
+            if self.cb_post.isChecked():
+                self.set_address(f"{self.full_address}\nПочтовый адрес: {self.postal_code}")
+            else:
+                self.set_address(self.full_address)
