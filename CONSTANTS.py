@@ -1,4 +1,4 @@
-CORDS_DEFAULT = ["2.369370", "48.84240"]  # Париж
+CORDS_DEFAULT = ['30.342530', '60.049491']  # Пр просвещенияч 33к2
 ZOOM = 15
 MAP_MODE = "map"
 COEFFICIENT = 0.0000428
