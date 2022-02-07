@@ -1,13 +1,14 @@
+from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QMainWindow
-from PyQt5.QtCore import Qt
 
 from CONSTANTS import ZOOM, CORDS_DEFAULT, MAP_MODE
 from UI.main_ui import Ui_MainWindow
+from pixel_to_geo_cords_alg import pixel_to_geo_cords
 from yandex_maps_api.geocoder import get_address_info
 from yandex_maps_api.make_params import make_params
+from yandex_maps_api.organizations import get_organization
 from yandex_maps_api.save_map_picture import save_map_picture
-from pixel_to_geo_cords_alg import pixel_to_geo_cords
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -85,7 +86,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             if 9 <= pos[0] <= 459 and 39 <= pos[1] <= 489:
                 pos = [pos[0] - 9, pos[1] - 39]
                 cords = pixel_to_geo_cords(pos, self.ll, self.zoom)
-                pass
+                org_name, org_address = get_organization(','.join(cords))
+                if org_name is not None:
+                    self.set_address(f"{org_name}\nАдрес: {org_address}")
         elif event.button() == Qt.LeftButton:
             pos = (event.x(), event.y())
             if 9 <= pos[0] <= 459 and 39 <= pos[1] <= 489:
